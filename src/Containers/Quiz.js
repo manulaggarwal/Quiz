@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {Question} from '../Components';
 import { Grid } from 'react-flexbox-grid';
-import {loadData, currentQuestion, nextQuestion} from '../Actions';
+import {loadData, calculateTotal, nextQuestion} from '../Actions';
 
 class Quiz extends React.Component {
 
@@ -32,6 +32,8 @@ class Quiz extends React.Component {
   handleClicks(e) {
     if(e.target && e.target.type === "button") {
       this.props.next(this.props.questions);
+    } else if(e.target && e.target.type === "radio") {
+      this.props.answered(e.target.id, this.props.questions);
     }
   }
 
@@ -44,21 +46,20 @@ class Quiz extends React.Component {
       <Grid fluid>
         <h1>Quiz App</h1>
         {
-          this.props.questions.map((q,i)=>{
-            if(q.active) {
-              return <Question
-                key={i}
-                type="button" 
-                value={q.title}
-                text={q.text}
-                options={q.options}
-                answer={q.answer_id}
-                id={++i}
-                onClick={this.handleClicks}
-                >
-              </Question>
-            }
-          })
+          this.props.currentQuestion !== "result"?
+            this.props.questions.map((q,i)=>{
+              return q.active? <Question
+                                  key={i}
+                                  type="button" 
+                                  value={q.title}
+                                  text={q.text}
+                                  options={q.options}
+                                  answer={q.answer_id}
+                                  id={++i}
+                                  onClick={this.handleClicks}
+                                >
+                              </Question> : null
+            })  : <span>You Got: {this.props.result+"/"+this.props.questions.length}</span>
         } 
       </Grid>
     )
@@ -68,18 +69,21 @@ class Quiz extends React.Component {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     loadData: (data)=> {
-      dispatch(loadData(data))
-    //  dispatch(currentQuestion(window.location.pathname.slice(1) !== "" ? window.location.pathname.slice(-1): "1"))
+      dispatch(loadData(data));
     },
     next: (data)=> {
       dispatch(nextQuestion(data));
+    },
+    answered: (answer, questions)=>{
+      dispatch(calculateTotal(answer, questions))
     }
   }
 }
 const mapStateToProps = (state, ownProps) => {
   return {
-    questions: state && state.fetch,
-    currentQuestion: state.current || ''
+    questions: state.fetch,
+    currentQuestion: state.next,
+    result: state.total
   };
 }
 

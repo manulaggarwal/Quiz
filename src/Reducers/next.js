@@ -4,18 +4,18 @@ const nextQuestion = (questions) => {
             questions[i].active = false;
             if((i + 1) !== questions.length) {
                 questions[i+1].active = true;
-                break;
+                return i+2;
+            } else {
+                return "result"
             }
         }
     }
-    return questions;
 }
 
 const next = (state = [], action = {}) => {
     switch (action.type) {
         case 'NEXT':
             return nextQuestion(action.data);
-        
         default: return state;
     }
 }

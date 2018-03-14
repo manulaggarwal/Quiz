@@ -1,12 +1,12 @@
 import {combineReducers} from 'redux';
 import fetch from './data';
 import next from './next';
-import select from './select';
+import total from './total';
 
 const quizApp = combineReducers({
     fetch,
     next,
-    select
+    total
 });
 
 export default quizApp;
