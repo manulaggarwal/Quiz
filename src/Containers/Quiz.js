@@ -25,29 +25,21 @@ class Quiz extends React.Component {
         data[d].isCorrect = false;
         questions.push(data[d]);
       });
-    //  this.props.history.push("/1");
       this.props.loadData(questions);
     });
+  }
+
+  handleClicks(e) {
+    if(e.target && e.target.type === "button") {
+      this.props.next(this.props.questions);
+    }
   }
 
   componentDidMount() {
     this.getData();
   }
 
-  handleClicks(e) {
-    var index = 0;
-    if (e && e.target && e.target.type === "button") {
-      this.props.questions.forEach((el,i)=>{
-        if(el.active) {
-          index = i;
-        }
-      });
-      this.props.next(index+1, this.props.questions);
-    }
-  }
-
   render() {
-    console.log(this.props)
     return(
       <Grid fluid>
         <h1>Quiz App</h1>
@@ -79,8 +71,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       dispatch(loadData(data))
     //  dispatch(currentQuestion(window.location.pathname.slice(1) !== "" ? window.location.pathname.slice(-1): "1"))
     },
-    next: (index, data)=> {
-      dispatch(nextQuestion(index, data));
+    next: (data)=> {
+      dispatch(nextQuestion(data));
     }
   }
 }
